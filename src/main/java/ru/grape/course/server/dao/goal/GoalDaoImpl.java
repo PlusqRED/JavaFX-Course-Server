@@ -12,17 +12,29 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GoalDaoImpl implements GoalDao {
-    private Datasource datasource = Datasource.getInstance();
-    private static GoalDaoImpl instance;
-
     //language=SQL
     private static final String GET_ALL =
             "select * from public.goal";
-
     //language=SQL
     private final static String UPDATE_GOAL =
             "update public.goal set name = ?, priority = ? where id = ?";
+    private static GoalDaoImpl instance;
+    private final Datasource datasource = Datasource.getInstance();
 
+
+    private GoalDaoImpl() {
+    }
+
+    public static GoalDaoImpl getInstance() {
+        if (instance == null) {
+            synchronized (GoalDaoImpl.class) {
+                if (instance == null) {
+                    instance = new GoalDaoImpl();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public void updateGoals(List<Goal> goals) {
@@ -41,7 +53,7 @@ public class GoalDaoImpl implements GoalDao {
     }
 
     @Override
-    public Optional<Goal> get(long id) throws SQLException {
+    public Optional<Goal> get(long id) {
         return Optional.empty();
     }
 
@@ -57,30 +69,17 @@ public class GoalDaoImpl implements GoalDao {
     }
 
     @Override
-    public void save(Goal goal) throws SQLException {
+    public void save(Goal goal) {
 
     }
 
     @Override
-    public void update(Goal goal) throws SQLException {
+    public void update(Goal goal) {
 
     }
 
     @Override
-    public void delete(Goal goal) throws SQLException {
+    public void delete(Goal goal) {
 
-    }
-
-    private GoalDaoImpl() {}
-
-    public static GoalDaoImpl getInstance() {
-        if(instance == null) {
-            synchronized (GoalDaoImpl.class) {
-                if(instance == null) {
-                    instance = new GoalDaoImpl();
-                }
-            }
-        }
-        return instance;
     }
 }

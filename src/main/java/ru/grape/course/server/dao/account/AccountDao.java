@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface AccountDao extends CrudDao<Account> {
     Account getByLogin(String login) throws SQLException;
+
     List<Account> getByRole(Role role) throws SQLException;
 }

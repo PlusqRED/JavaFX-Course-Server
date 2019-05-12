@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class RateDaoImpl implements RateDao {
-    private Datasource datasource = Datasource.getInstance();
-    private static RateDaoImpl instance;
-
     //language=SQL
     private static final String UPDATE_BY_CLIENT_ID =
             "update public.rate set variety = ?, " +
@@ -22,28 +19,53 @@ public class RateDaoImpl implements RateDao {
                     "trainers_time = ?, " +
                     "quality = ? " +
                     "where client_id = ?";
-
     //language=SQL
     private static final String SAVE =
             "insert into public.rate values (DEFAULT, ?, ?, ?, ?, ?, ?)";
-
     //language=SQL
     private static final String GET_ALL =
             "select * from public.rate";
-
     //language=SQL
     private static final String GET_RATE_BY_CLIENT_ID =
             "select * from public.rate where client_id = ?";
+
+    //language=SQL
+    private static final String DELETE_BY_CLIENT_ID =
+            "delete from public.rate where client_id = ?";
+
+    private static RateDaoImpl instance;
+    private final Datasource datasource = Datasource.getInstance();
+
+    private RateDaoImpl() {
+    }
+
+    public static RateDaoImpl getInstance() {
+        if (instance == null) {
+            synchronized (RateDaoImpl.class) {
+                if (instance == null) {
+                    instance = new RateDaoImpl();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public Rate getRateByClientId(long id) throws SQLException {
         PreparedStatement statement = datasource.getStatement(GET_RATE_BY_CLIENT_ID);
         statement.setLong(1, id);
         ResultSet resultSet = statement.executeQuery();
-        if(resultSet.next()) {
+        if (resultSet.next()) {
             return new Rate(resultSet);
         }
         return null;
+    }
+
+    @Override
+    public void deleteByClientId(Long id) throws SQLException {
+        PreparedStatement statement = datasource.getStatement(DELETE_BY_CLIENT_ID);
+        statement.setLong(1, id);
+        statement.executeUpdate();
     }
 
     @Override
@@ -55,13 +77,13 @@ public class RateDaoImpl implements RateDao {
         statement.setInt(4, rate.getTrainers_time());
         statement.setInt(5, rate.getQuality());
         statement.setLong(6, rate.getClient().getId());
-        if(statement.executeUpdate() == 0) {
+        if (statement.executeUpdate() == 0) {
             save(rate);
         }
     }
 
     @Override
-    public Optional<Rate> get(long id) throws SQLException {
+    public Optional<Rate> get(long id) {
         return Optional.empty();
     }
 
@@ -89,20 +111,7 @@ public class RateDaoImpl implements RateDao {
     }
 
     @Override
-    public void delete(Rate rate) throws SQLException {
+    public void delete(Rate rate) {
 
-    }
-
-    private RateDaoImpl() {}
-
-    public static RateDaoImpl getInstance() {
-        if(instance == null) {
-            synchronized (RateDaoImpl.class) {
-                if(instance == null) {
-                    instance = new RateDaoImpl();
-                }
-            }
-        }
-        return instance;
     }
 }

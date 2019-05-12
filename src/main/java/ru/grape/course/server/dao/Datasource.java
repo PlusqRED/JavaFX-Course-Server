@@ -13,10 +13,8 @@ import ru.grape.course.server.dao.rate.RateDaoImpl;
 import ru.grape.course.server.dao.service.ServiceDao;
 import ru.grape.course.server.dao.service.ServiceDaoImpl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,6 +25,21 @@ public class Datasource {
     private static Datasource instance;
     private Connection connection;
 
+    private Datasource() {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream("properties/db.properties"));
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(
+                    properties.getProperty("db.url"),
+                    properties.getProperty("db.user"),
+                    properties.getProperty("db.password")
+            );
+        } catch (IOException | ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Datasource getInstance() {
         if (instance == null) {
             synchronized (Datasource.class) {
@@ -36,21 +49,6 @@ public class Datasource {
             }
         }
         return instance;
-    }
-
-    private Datasource() {
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileInputStream(new File(getClass().getResource("/properties/db.properties").toURI())));
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(
-                    properties.getProperty("db.url"),
-                    properties.getProperty("db.user"),
-                    properties.getProperty("db.password")
-            );
-        } catch (IOException | ClassNotFoundException | SQLException | URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
     public Connection getConnection() {
@@ -68,9 +66,11 @@ public class Datasource {
     public ExerciseDao getExerciseDao() {
         return ExerciseDaoImpl.getInstance();
     }
+
     public ClientDao getClientDao() {
         return ClientDaoImpl.getInstance();
     }
+
     public ServiceDao getServiceDao() {
         return ServiceDaoImpl.getInstance();
     }
@@ -78,6 +78,7 @@ public class Datasource {
     public RateDao getRateDao() {
         return RateDaoImpl.getInstance();
     }
+
     public GoalDao getGoalDao() {
         return GoalDaoImpl.getInstance();
     }

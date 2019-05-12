@@ -7,4 +7,6 @@ import java.sql.SQLException;
 
 public interface RateDao extends CrudDao<Rate> {
     Rate getRateByClientId(long id) throws SQLException;
+
+    void deleteByClientId(Long id) throws SQLException;
 }

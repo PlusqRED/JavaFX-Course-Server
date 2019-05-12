@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.grape.course.server.dao.Datasource;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -33,6 +34,10 @@ public class Client {
         this.phone = resultSet.getLong("phone");
         this.weight = resultSet.getDouble("weight");
         this.height = resultSet.getDouble("height");
+        Date birth;
+        if ((birth = resultSet.getDate("birthday")) != null) {
+            this.birthday = birth.toLocalDate();
+        }
         Datasource.getInstance()
                 .getAccountDao()
                 .get(resultSet.getLong("accountid"))

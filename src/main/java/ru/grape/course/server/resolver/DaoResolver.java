@@ -5,10 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONObject;
 import ru.grape.course.server.commons.DaoAction;
 import ru.grape.course.server.dao.Datasource;
-import ru.grape.course.server.dao.account.AccountDao;
 import ru.grape.course.server.dao.client.ClientDao;
-import ru.grape.course.server.dao.exercise.ExerciseDao;
-import ru.grape.course.server.dao.rate.RateDao;
 import ru.grape.course.server.dao.service.ServiceDao;
 import ru.grape.course.server.model.*;
 import ru.grape.course.server.utils.CustomHash;
@@ -20,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DaoResolver implements Resolver {
-    private Datasource datasource;
-
     private static DaoResolver instance;
-
-    private Gson gson;
+    private final Datasource datasource;
+    private final Gson gson;
 
     private DaoResolver() {
         gson = new Gson();
@@ -162,7 +157,8 @@ public class DaoResolver implements Resolver {
     }
 
     private void updateGoals(JSONObject inputObject) {
-        Type goalsList = new TypeToken<ArrayList<Goal>>() {}.getType();
+        Type goalsList = new TypeToken<ArrayList<Goal>>() {
+        }.getType();
         List<Goal> goals = gson.fromJson(inputObject.getString("goals"), goalsList);
         datasource.getGoalDao().updateGoals(goals);
     }

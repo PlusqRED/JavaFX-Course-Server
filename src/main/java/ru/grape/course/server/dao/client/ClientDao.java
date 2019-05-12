@@ -12,4 +12,6 @@ public interface ClientDao extends CrudDao<Client> {
     void deleteClientByLogin(String login) throws SQLException;
 
     void addClientByAccount(Account account) throws SQLException;
+
+    Client getByAccountId(long id) throws SQLException;
 }

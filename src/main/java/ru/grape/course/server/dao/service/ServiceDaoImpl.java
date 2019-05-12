@@ -12,24 +12,39 @@ import java.util.List;
 import java.util.Optional;
 
 public class ServiceDaoImpl implements ServiceDao {
-    private static ServiceDaoImpl instance;
-    private Datasource datasource = Datasource.getInstance();
-
     //language=SQL
     private static final String SAVE_CLIENT_SERVICE =
             "insert into public.service values (DEFAULT, ?, ?, ?)";
-
     //language=SQL
     private static final String GET_BY_CLIENT_ID =
             "select * from public.service where client_id = ?";
-
     //language=SQL
     private static final String DELETE_CLIENT_SERVICE_BY_EXERCISE_ID =
             "delete from public.service where client_id = ? and exercise_id = ?";
-
     //language=SQL
     private static final String GET_ALL =
             "select * from public.service";
+
+    //language=SQL
+    private static final String DELETE_BY_CLIENT_ID =
+            "delete from public.service where client_id = ?";
+
+    private static ServiceDaoImpl instance;
+    private final Datasource datasource = Datasource.getInstance();
+
+    private ServiceDaoImpl() {
+    }
+
+    public static ServiceDaoImpl getInstance() {
+        if (instance == null) {
+            synchronized (ServiceDaoImpl.class) {
+                if (instance == null) {
+                    instance = new ServiceDaoImpl();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public List<Service> getByClientId(long clientId) throws SQLException {
@@ -52,7 +67,14 @@ public class ServiceDaoImpl implements ServiceDao {
     }
 
     @Override
-    public Optional<Service> get(long id) throws SQLException {
+    public void deleteByClientId(Long id) throws SQLException {
+        PreparedStatement statement = datasource.getStatement(DELETE_BY_CLIENT_ID);
+        statement.setLong(1, id);
+        statement.executeUpdate();
+    }
+
+    @Override
+    public Optional<Service> get(long id) {
         return Optional.empty();
     }
 
@@ -77,25 +99,12 @@ public class ServiceDaoImpl implements ServiceDao {
     }
 
     @Override
-    public void update(Service service) throws SQLException {
+    public void update(Service service) {
 
     }
 
     @Override
     public void delete(Service service) {
 
-    }
-
-    private ServiceDaoImpl() {}
-
-    public static ServiceDaoImpl getInstance() {
-        if(instance == null) {
-            synchronized (ServiceDaoImpl.class) {
-                if(instance == null) {
-                    instance = new ServiceDaoImpl();
-                }
-            }
-        }
-        return instance;
     }
 }

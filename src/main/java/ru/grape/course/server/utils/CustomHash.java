@@ -3,11 +3,11 @@ package ru.grape.course.server.utils;
 import java.util.Random;
 
 public class CustomHash {
+    private static final Random random = new Random();
+    private static String alphabet = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789";
+
     private CustomHash() {
     }
-
-    private static Random random = new Random();
-    private static String alphabet = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789";
 
     public static String getHash(String input, int hashSize) {
         char[] chars = input.toCharArray();

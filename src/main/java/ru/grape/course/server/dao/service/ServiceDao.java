@@ -10,4 +10,6 @@ public interface ServiceDao extends CrudDao<Service> {
     List<Service> getByClientId(long clientId) throws SQLException;
 
     void deleteClientServiceByExerciseId(Long client_id, Integer exercise_id) throws SQLException;
+
+    void deleteByClientId(Long id) throws SQLException;
 }
