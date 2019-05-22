@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 import ru.grape.course.server.commons.DaoAction;
 import ru.grape.course.server.resolver.DaoResolver;
+import ru.grape.course.server.resolver.Resolver;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 public class App extends Application {
     private final DaoResolver daoResolver = DaoResolver.getInstance();
+    private int userCount;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -24,14 +26,17 @@ public class App extends Application {
         Properties properties = new Properties();
         properties.load(new FileInputStream("properties/server.properties"));
         ServerSocket serverSocket = new ServerSocket(Integer.valueOf(properties.getProperty("server.port")));
+        userCount = 0;
         while (true) {
             System.out.println("Server ready to accept user...");
             acceptUser(serverSocket.accept());
+            System.out.println(++userCount);
         }
     }
 
     private void acceptUser(Socket user) {
         System.out.println("User accepted...");
+        System.out.println(user.getInetAddress());
         new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(user.getInputStream()));
                  PrintWriter writer = new PrintWriter(user.getOutputStream(), true)) {
@@ -45,6 +50,7 @@ public class App extends Application {
             } catch (IOException | SQLException e) {
                 e.printStackTrace();
                 System.out.println("Client has been disconnected!");
+                userCount--;
             }
         }).start();
     }

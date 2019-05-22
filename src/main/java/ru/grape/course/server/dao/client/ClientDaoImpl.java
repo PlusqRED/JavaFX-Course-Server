@@ -89,20 +89,9 @@ public class ClientDaoImpl implements ClientDao {
     }
 
     @Override
-    public Client getByAccountId(long id) throws SQLException {
-        PreparedStatement statement = datasource.getStatement(GET_BY_ACCOUNT_ID);
-        statement.setLong(1, id);
-        ResultSet resultSet = statement.executeQuery();
-        if(resultSet.next()) {
-            return new Client(resultSet);
-        }
-        return null;
-    }
-
-    @Override
     public void deleteClientByLogin(String login) throws SQLException {
         Account account = datasource.getAccountDao().getByLogin(login);
-        Client client = getByAccountId(account.getId());
+        Client client = getClientByAccountId(account.getId());
         datasource.getRateDao().deleteByClientId(client.getId());
         datasource.getServiceDao().deleteByClientId(client.getId());
         PreparedStatement statement = datasource.getStatement(DELETE_CLIENT_BY_ACCOUNT_ID);

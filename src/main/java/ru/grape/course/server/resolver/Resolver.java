@@ -6,6 +6,6 @@ import ru.grape.course.server.commons.DaoAction;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
-interface Resolver {
+public interface Resolver {
     void resolve(DaoAction daoAction, JSONObject inputObject, PrintWriter writer) throws SQLException;
 }
